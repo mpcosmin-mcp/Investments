@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wealth Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       WEALTH BUILDER — Bioluminescent Dark Aesthetic
+       Matching sleepTrack / CFO dashboard design language
+    ═══════════════════════════════════════════════════════ */
+    
+    :root {
+      --bg-deep: #06080d;
+      --bg-card: #0b0f18;
+      --bg-card-hover: #0f1520;
+      --bg-input: #0d111c;
+      --border: #141c2e;
+      --border-glow: #00ffc830;
+      
+      --cyan: #00ffc8;
+      --cyan-dim: #00ffc850;
+      --cyan-glow: #00ffc820;
+      --teal: #00d4aa;
+      --green: #00e87b;
+      --amber: #ffb800;
+      --amber-dim: #ffb80050;
+      --red: #ff4060;
+      --red-dim: #ff406050;
+      --purple: #a78bfa;
+      --blue: #38bdf8;
+      
+      --text-primary: #e8f0f8;
+      --text-secondary: #6b7f99;
+      --text-dim: #3d4f66;
+      
+      --safety-color: #38bdf8;
+      --core-color: #00ffc8;
+      --growth-color: #a78bfa;
+      --risky-color: #ff4060;
+      
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Ambient background ─────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(ellipse at 20% 20%, #00ffc808 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, #a78bfa06 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, #38bdf804 0%, transparent 60%);
+      animation: ambientDrift 30s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes ambientDrift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(-2%, 1%) rotate(1deg); }
+      66% { transform: translate(1%, -1%) rotate(-0.5deg); }
+    }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+      padding: 28px 0 20px;
+    }
+
+    .header-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 300;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-shadow: 0 0 40px var(--cyan-glow);
+    }
+
+    .header-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      margin: 12px auto 0;
+    }
+
+    /* ── Stats Bar ──────────────────────────────────────── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--cyan);
+    }
+
+    .stat-value.amber { color: var(--amber); }
+    .stat-value.green { color: var(--green); }
+    .stat-value.purple { color: var(--purple); }
+
+    /* ── Navigation Tabs ────────────────────────────────── */
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .nav-tab {
+      flex: 1;
+      padding: 10px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .nav-tab:hover { color: var(--text-secondary); }
+    .nav-tab.active {
+      color: var(--cyan);
+      background: var(--bg-deep);
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    /* ── Panels ─────────────────────────────────────────── */
+    .panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Card Base ──────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    .card:hover { border-color: var(--border-glow); }
+
+    .card-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan-dim);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       WEALTH PYRAMID
+    ═══════════════════════════════════════════════════════ */
+    .pyramid-container {
+      display: flex;
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    .pyramid-visual {
+      flex: 1;
+      min-height: 320px;
+      position: relative;
+    }
+
+    .pyramid-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .pyramid-legend {
+      flex: 0 0 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .legend-item:hover {
+      border-color: var(--border-glow);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-info { flex: 1; }
+
+    .legend-category {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .legend-pcts {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .legend-pcts .actual {
+      color: var(--text-secondary);
+    }
+
+    .deviation-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .deviation-badge.over {
+      color: var(--amber);
+      background: var(--amber-dim);
+    }
+
+    .deviation-badge.under {
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    .deviation-badge.good {
+      color: var(--green);
+      background: #00e87b20;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       QUICK ENTRY FORM
+    ═══════════════════════════════════════════════════════ */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--cyan-dim);
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    .form-group select option {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border: 1px solid var(--cyan-dim);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--cyan);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn:hover {
+      background: var(--cyan-glow);
+      box-shadow: 0 0 20px var(--cyan-glow);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn.btn-danger {
+      border-color: var(--red-dim);
+      color: var(--red);
+    }
+
+    .btn.btn-danger:hover {
+      background: var(--red-dim);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TRANSACTIONS TABLE
+    ═══════════════════════════════════════════════════════ */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+    }
+
+    tbody td {
+      padding: 10px 12px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid #0d111c;
+    }
+
+    tbody tr:hover td {
+      color: var(--text-primary);
+      background: var(--bg-card-hover);
+    }
+
+    .cat-badge {
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .cat-badge.safety  { color: var(--safety-color); background: #38bdf815; }
+    .cat-badge.core    { color: var(--core-color);   background: #00ffc815; }
+    .cat-badge.growth  { color: var(--growth-color); background: #a78bfa15; }
+    .cat-badge.risky   { color: var(--risky-color);  background: #ff406015; }
+
+    /* ═══════════════════════════════════════════════════════
+       COMPOUND PROJECTION CHART (Canvas)
+    ═══════════════════════════════════════════════════════ */
+    .projection-controls {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .projection-controls .form-group {
+      flex: 0 0 auto;
+    }
+
+    .projection-controls input {
+      width: 120px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 280px;
+      margin-top: 8px;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       MARKET REFERENCE
+    ═══════════════════════════════════════════════════════ */
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .market-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .market-ticker {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .market-name {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .market-price {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .market-change {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      margin-left: 8px;
+    }
+
+    .market-change.up { color: var(--green); }
+    .market-change.down { color: var(--red); }
+
+    /* ── Toast Notification ─────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--cyan-dim);
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--cyan);
+      box-shadow: 0 4px 24px rgba(0, 255, 200, 0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      border-color: var(--red-dim);
+      color: var(--red);
+    }
+
+    /* ── Loading State ──────────────────────────────────── */
+    .loading-pulse {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .empty-state .icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .pyramid-container { flex-direction: column; }
+      .pyramid-legend { flex: none; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+      .header h1 { font-size: 20px; letter-spacing: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">Boring Wealth Builder</div>
+    <h1>Portfolio</h1>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-label">Total Invested</div>
+      <div class="stat-value" id="statTotal">€0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Transactions</div>
+      <div class="stat-value amber" id="statCount">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">15yr Projection</div>
+      <div class="stat-value green" id="statProjection">€0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">DCA Streak</div>
+      <div class="stat-value purple" id="statStreak">0 mo</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-panel="pyramid" onclick="switchTab(this)">Pyramid</button>
+    <button class="nav-tab" data-panel="entry" onclick="switchTab(this)">Quick Entry</button>
+    <button class="nav-tab" data-panel="history" onclick="switchTab(this)">History</button>
+    <button class="nav-tab" data-panel="projection" onclick="switchTab(this)">Projection</button>
+    <button class="nav-tab" data-panel="market" onclick="switchTab(this)">Market</button>
+  </div>
+
+  <!-- ═══════ PYRAMID PANEL ═══════ -->
+  <div class="panel active" id="panel-pyramid">
+    <div class="card">
+      <div class="card-title">Wealth Pyramid — Allocation vs Target</div>
+      <div class="pyramid-container">
+        <div class="pyramid-visual">
+          <svg class="pyramid-svg" viewBox="0 0 400 340" id="pyramidSVG">
+            <defs>
+              <!-- Glow filters -->
+              <filter id="glowSafety"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glowCore"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glowGrowth"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glowRisky"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            
+            <!-- Pyramid layers (bottom to top: Safety → Core → Growth → Risky) -->
+            <!-- Safety (bottom, widest) -->
+            <polygon id="pyrSafety" points="40,310 360,310 310,225 90,225" 
+              fill="#38bdf810" stroke="#38bdf840" stroke-width="1" filter="url(#glowSafety)"/>
+            <text x="200" y="275" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="11" font-weight="500">SAFETY</text>
+            <text x="200" y="292" text-anchor="middle" fill="#38bdf860" font-family="JetBrains Mono" font-size="9" id="pyrSafetyPct">0%</text>
+
+            <!-- Core -->
+            <polygon id="pyrCore" points="90,220 310,220 270,145 130,145" 
+              fill="#00ffc810" stroke="#00ffc840" stroke-width="1" filter="url(#glowCore)"/>
+            <text x="200" y="188" text-anchor="middle" fill="#00ffc8" font-family="JetBrains Mono" font-size="11" font-weight="500">CORE</text>
+            <text x="200" y="205" text-anchor="middle" fill="#00ffc860" font-family="JetBrains Mono" font-size="9" id="pyrCorePct">0%</text>
+
+            <!-- Growth -->
+            <polygon id="pyrGrowth" points="130,140 270,140 240,80 160,80" 
+              fill="#a78bfa10" stroke="#a78bfa40" stroke-width="1" filter="url(#glowGrowth)"/>
+            <text x="200" y="115" text-anchor="middle" fill="#a78bfa" font-family="JetBrains Mono" font-size="11" font-weight="500">GROWTH</text>
+            <text x="200" y="131" text-anchor="middle" fill="#a78bfa60" font-family="JetBrains Mono" font-size="9" id="pyrGrowthPct">0%</text>
+
+            <!-- Risky (top, smallest) -->
+            <polygon id="pyrRisky" points="160,75 240,75 215,30 185,30" 
+              fill="#ff406010" stroke="#ff406040" stroke-width="1" filter="url(#glowRisky)"/>
+            <text x="200" y="56" text-anchor="middle" fill="#ff4060" font-family="JetBrains Mono" font-size="10" font-weight="500">RISKY</text>
+            <text x="200" y="70" text-anchor="middle" fill="#ff406060" font-family="JetBrains Mono" font-size="8" id="pyrRiskyPct">0%</text>
+          </svg>
+        </div>
+        <div class="pyramid-legend" id="pyramidLegend">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ QUICK ENTRY PANEL ═══════ -->
+  <div class="panel" id="panel-entry">
+    <div class="card">
+      <div class="card-title">Log Transaction</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="txDate" />
+        </div>
+        <div class="form-group">
+          <label>Asset Name</label>
+          <input type="text" id="txName" placeholder="e.g. Vanguard S&P 500" />
+        </div>
+        <div class="form-group">
+          <label>Ticker</label>
+          <input type="text" id="txTicker" placeholder="e.g. VOO" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="txCategory">
+            <option value="Safety">Safety</option>
+            <option value="Core" selected>Core</option>
+            <option value="Growth">Growth</option>
+            <option value="Risky">Risky</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (€)</label>
+          <input type="number" id="txAmount" placeholder="300" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Price per Share</label>
+          <input type="number" id="txPrice" placeholder="520.45" step="0.01" />
+        </div>
+      </div>
+      <button class="btn" onclick="submitTransaction()">Log Buy</button>
+    </div>
+
+    <!-- Quick DCA Templates -->
+    <div class="card">
+      <div class="card-title">DCA Quick Buttons</div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn" onclick="quickDCA('VOO', 'Vanguard S&P 500', 'Core')">VOO</button>
+        <button class="btn" onclick="quickDCA('VTI', 'Vanguard Total Market', 'Core')">VTI</button>
+        <button class="btn" onclick="quickDCA('SCHD', 'Schwab Dividend', 'Core')">SCHD</button>
+        <button class="btn" onclick="quickDCA('QQQ', 'Invesco Nasdaq 100', 'Growth')">QQQ</button>
+        <button class="btn" onclick="quickDCA('SGOV', 'iShares Treasury', 'Safety')">SGOV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ HISTORY PANEL ═══════ -->
+  <div class="panel" id="panel-history">
+    <div class="card">
+      <div class="card-title">Transaction History</div>
+      <div class="table-wrap" id="txTableWrap">
+        <div class="empty-state">
+          <div class="icon">◇</div>
+          No transactions yet. Start your boring DCA journey.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ PROJECTION PANEL ═══════ -->
+  <div class="panel" id="panel-projection">
+    <div class="card">
+      <div class="card-title">Compound Projection</div>
+      <div class="projection-controls">
+        <div class="form-group">
+          <label>Monthly (€)</label>
+          <input type="number" id="projMonthly" value="300" onchange="updateProjection()" />
+        </div>
+        <div class="form-group">
+          <label>Years</label>
+          <input type="number" id="projYears" value="15" onchange="updateProjection()" />
+        </div>
+        <div class="form-group">
+          <label>Annual Return %</label>
+          <input type="number" id="projReturn" value="7" step="0.5" onchange="updateProjection()" />
+        </div>
+        <button class="btn" onclick="updateProjection()">Calculate</button>
+      </div>
+      <div class="chart-container">
+        <canvas id="projectionChart"></canvas>
+      </div>
+      <div id="projectionSummary" style="margin-top: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ MARKET PANEL ═══════ -->
+  <div class="panel" id="panel-market">
+    <div class="card">
+      <div class="card-title">Market Reference — Live Prices</div>
+      <div class="market-grid" id="marketGrid">
+        <div class="empty-state loading-pulse">Loading market data...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let portfolioData = null;
+let marketData = [];
+let projectionData = [];
+
+// ═══════════════════════════════════════════════════════
+//  GOOGLE APPS SCRIPT BRIDGE
+//  In standalone mode, these call the GAS backend.
+//  For local dev/preview, they use mock data.
+// ═══════════════════════════════════════════════════════
+const isGAS = typeof google !== 'undefined' && google.script;
+
+function gasRun(fn, ...args) {
+  return new Promise((resolve, reject) => {
+    if (isGAS) {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)
+        [fn](...args);
+    } else {
+      // Mock for standalone preview
+      resolve(getMockData(fn, args));
+    }
+  });
+}
+
+// Mock data for preview outside GAS
+function getMockData(fn, args) {
+  if (fn === 'getPortfolioSummary') return {
+    totalInvested: 4850,
+    allocation: [
+      { category: 'Safety',  targetPct: 40, actualPct: 25.3, actualAmount: 1230, deviation: -14.7 },
+      { category: 'Core',    targetPct: 35, actualPct: 41.2, actualAmount: 2000, deviation: 6.2 },
+      { category: 'Growth',  targetPct: 20, actualPct: 23.7, actualAmount: 1150, deviation: 3.7 },
+      { category: 'Risky',   targetPct: 5,  actualPct: 9.7,  actualAmount: 470,  deviation: 4.7 },
+    ],
+    monthlyHistory: [
+      { month: '2025-10', total: 600 },
+      { month: '2025-11', total: 800 },
+      { month: '2025-12', total: 750 },
+      { month: '2026-01', total: 900 },
+      { month: '2026-02', total: 900 },
+      { month: '2026-03', total: 900 },
+    ],
+    transactionCount: 18
+  };
+  if (fn === 'getTransactions') return [
+    { date: '2026-03-01', assetName: 'Vanguard S&P 500', ticker: 'VOO', category: 'Core', amount: 300, priceBought: 528.4, shares: 0.5677 },
+    { date: '2026-03-01', assetName: 'Schwab Dividend', ticker: 'SCHD', category: 'Core', amount: 200, priceBought: 28.6, shares: 6.993 },
+    { date: '2026-02-15', assetName: 'iShares Treasury', ticker: 'SGOV', category: 'Safety', amount: 400, priceBought: 100.2, shares: 3.992 },
+    { date: '2026-02-01', assetName: 'Invesco Nasdaq 100', ticker: 'QQQ', category: 'Growth', amount: 300, priceBought: 510.1, shares: 0.588 },
+    { date: '2026-01-15', assetName: 'iShares Bitcoin Trust', ticker: 'IBIT', category: 'Risky', amount: 150, priceBought: 52.3, shares: 2.868 },
+  ];
+  if (fn === 'getMarketData') return [
+    { ticker: 'SGOV', name: 'iShares 0-3M Treasury', category: 'Safety', price: 100.18, changePct: 0.01 },
+    { ticker: 'BND', name: 'Vanguard Total Bond', category: 'Safety', price: 71.45, changePct: -0.12 },
+    { ticker: 'VOO', name: 'Vanguard S&P 500', category: 'Core', price: 532.10, changePct: 0.87 },
+    { ticker: 'VTI', name: 'Vanguard Total Market', category: 'Core', price: 281.30, changePct: 0.75 },
+    { ticker: 'SCHD', name: 'Schwab US Dividend', category: 'Core', price: 28.92, changePct: 0.34 },
+    { ticker: 'QQQ', name: 'Invesco Nasdaq 100', category: 'Growth', price: 515.80, changePct: 1.2 },
+    { ticker: 'VGT', name: 'Vanguard Info Tech', category: 'Growth', price: 582.10, changePct: 0.95 },
+    { ticker: 'IBIT', name: 'iShares Bitcoin Trust', category: 'Risky', price: 55.40, changePct: 3.2 },
+    { ticker: 'COIN', name: 'Coinbase', category: 'Risky', price: 225.60, changePct: -1.5 },
+  ];
+  if (fn === 'getCompoundProjection') {
+    const monthly = args[0] || 300;
+    const yrs = args[1] || 15;
+    const rate = (args[2] || 7) / 100;
+    const mr = rate / 12;
+    const result = [];
+    let bal = 0, contrib = 0;
+    for (let y = 0; y <= yrs; y++) {
+      result.push({ year: y, balance: Math.round(bal), contributed: Math.round(contrib), growth: Math.round(bal - contrib) });
+      for (let m = 0; m < 12; m++) { bal = (bal + monthly) * (1 + mr); contrib += monthly; }
+    }
+    return result;
+  }
+  if (fn === 'addTransaction') return { success: true, message: 'Transaction logged (preview)' };
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Set today's date as default
+  document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+  loadDashboard();
+});
+
+async function loadDashboard() {
+  try {
+    const [summary, market] = await Promise.all([
+      gasRun('getPortfolioSummary'),
+      gasRun('getMarketData')
+    ]);
+    
+    portfolioData = summary;
+    marketData = market;
+    
+    updateStats(summary);
+    updatePyramid(summary.allocation);
+    renderMarket(market);
+    updateProjection();
+  } catch (e) {
+    showToast('Failed to load data: ' + e.message, true);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATS BAR
+// ═══════════════════════════════════════════════════════
+function updateStats(data) {
+  document.getElementById('statTotal').textContent = '€' + formatNum(data.totalInvested);
+  document.getElementById('statCount').textContent = data.transactionCount;
+  
+  // DCA streak (consecutive months)
+  const months = data.monthlyHistory || [];
+  let streak = 0;
+  if (months.length > 0) {
+    // Count from most recent backwards
+    for (let i = months.length - 1; i >= 0; i--) {
+      if (months[i].total > 0) streak++;
+      else break;
+    }
+  }
+  document.getElementById('statStreak').textContent = streak + ' mo';
+}
+
+// ═══════════════════════════════════════════════════════
+//  PYRAMID
+// ═══════════════════════════════════════════════════════
+const categoryColors = {
+  'Safety':  { color: '#38bdf8', fill: '#38bdf8', class: 'safety' },
+  'Core':    { color: '#00ffc8', fill: '#00ffc8', class: 'core' },
+  'Growth':  { color: '#a78bfa', fill: '#a78bfa', class: 'growth' },
+  'Risky':   { color: '#ff4060', fill: '#ff4060', class: 'risky' },
+};
+
+function updatePyramid(allocation) {
+  if (!allocation) return;
+  
+  allocation.forEach(a => {
+    const c = categoryColors[a.category];
+    if (!c) return;
+    
+    const el = document.getElementById('pyr' + a.category);
+    if (el) {
+      // Fill intensity based on actual allocation
+      const intensity = Math.min(a.actualPct / 100, 1);
+      const fillOpacity = Math.max(0.08, intensity * 0.5);
+      el.setAttribute('fill', c.fill + Math.round(fillOpacity * 255).toString(16).padStart(2, '0'));
+      el.setAttribute('stroke', c.fill + '80');
+    }
+    
+    const pctEl = document.getElementById('pyr' + a.category + 'Pct');
+    if (pctEl) pctEl.textContent = a.actualPct + '%';
+  });
+  
+  // Legend
+  const legend = document.getElementById('pyramidLegend');
+  legend.innerHTML = allocation.map(a => {
+    const c = categoryColors[a.category] || { color: '#fff', class: '' };
+    const devClass = Math.abs(a.deviation) <= 3 ? 'good' : (a.deviation > 0 ? 'over' : 'under');
+    const devSign = a.deviation > 0 ? '+' : '';
+    return `
+      <div class="legend-item">
+        <div class="legend-dot" style="background: ${c.color}; box-shadow: 0 0 8px ${c.color}40;"></div>
+        <div class="legend-info">
+          <div class="legend-category">${a.category}</div>
+          <div class="legend-pcts">
+            Target: ${a.targetPct}% · <span class="actual">Actual: ${a.actualPct}%</span> · €${formatNum(a.actualAmount)}
+          </div>
+        </div>
+        <span class="deviation-badge ${devClass}">${devSign}${a.deviation}%</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  QUICK ENTRY
+// ═══════════════════════════════════════════════════════
+async function submitTransaction() {
+  const data = {
+    date:      document.getElementById('txDate').value,
+    assetName: document.getElementById('txName').value.trim(),
+    ticker:    document.getElementById('txTicker').value.trim().toUpperCase(),
+    category:  document.getElementById('txCategory').value,
+    amount:    parseFloat(document.getElementById('txAmount').value),
+    priceBought: parseFloat(document.getElementById('txPrice').value)
+  };
+
+  if (!data.date || !data.ticker || !data.amount) {
+    showToast('Fill in date, ticker, and amount', true);
+    return;
+  }
+
+  try {
+    const result = await gasRun('addTransaction', data);
+    if (result.success) {
+      showToast('Logged: ' + data.ticker + ' €' + data.amount);
+      // Clear form (keep date)
+      document.getElementById('txName').value = '';
+      document.getElementById('txTicker').value = '';
+      document.getElementById('txAmount').value = '';
+      document.getElementById('txPrice').value = '';
+      // Refresh data
+      loadDashboard();
+    }
+  } catch (e) {
+    showToast('Error: ' + e.message, true);
+  }
+}
+
+function quickDCA(ticker, name, category) {
+  document.getElementById('txTicker').value = ticker;
+  document.getElementById('txName').value = name;
+  document.getElementById('txCategory').value = category;
+  document.getElementById('txAmount').focus();
+  showToast(ticker + ' selected — enter amount');
+}
+
+// ═══════════════════════════════════════════════════════
+//  HISTORY TABLE
+// ═══════════════════════════════════════════════════════
+async function loadHistory() {
+  try {
+    const txs = await gasRun('getTransactions');
+    const wrap = document.getElementById('txTableWrap');
+    
+    if (!txs || txs.length === 0) {
+      wrap.innerHTML = '<div class="empty-state"><div class="icon">◇</div>No transactions yet.</div>';
+      return;
+    }
+
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Asset</th>
+            <th>Ticker</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>Shares</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${txs.map(t => `
+            <tr>
+              <td>${t.date}</td>
+              <td>${t.assetName}</td>
+              <td style="color: var(--text-primary); font-weight: 500;">${t.ticker}</td>
+              <td><span class="cat-badge ${(categoryColors[t.category]?.class || '')}">${t.category}</span></td>
+              <td>€${formatNum(t.amount)}</td>
+              <td>$${formatNum(t.priceBought)}</td>
+              <td>${t.shares?.toFixed(4) || '-'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (e) {
+    showToast('Failed to load history', true);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  COMPOUND PROJECTION (Canvas chart)
+// ═══════════════════════════════════════════════════════
+async function updateProjection() {
+  const monthly = parseFloat(document.getElementById('projMonthly').value) || 300;
+  const years = parseInt(document.getElementById('projYears').value) || 15;
+  const ret = parseFloat(document.getElementById('projReturn').value) || 7;
+
+  try {
+    projectionData = await gasRun('getCompoundProjection', monthly, years, ret);
+    drawProjectionChart(projectionData);
+    
+    const final = projectionData[projectionData.length - 1];
+    document.getElementById('statProjection').textContent = '€' + formatNum(final.balance);
+    
+    document.getElementById('projectionSummary').innerHTML = `
+      After <span style="color: var(--cyan);">${years} years</span> at €${monthly}/mo and ${ret}% return: 
+      <span style="color: var(--green);">€${formatNum(final.balance)}</span> total 
+      (€${formatNum(final.contributed)} contributed, <span style="color: var(--purple);">€${formatNum(final.growth)}</span> compound growth)
+    `;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function drawProjectionChart(data) {
+  const canvas = document.getElementById('projectionChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  
+  const W = rect.width;
+  const H = rect.height;
+  const pad = { top: 20, right: 20, bottom: 40, left: 65 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+  
+  ctx.clearRect(0, 0, W, H);
+  
+  if (!data || data.length < 2) return;
+  
+  const maxVal = Math.max(...data.map(d => d.balance));
+  const xStep = chartW / (data.length - 1);
+  
+  // Helper
+  const toX = i => pad.left + i * xStep;
+  const toY = v => pad.top + chartH - (v / maxVal) * chartH;
+  
+  // Grid lines
+  ctx.strokeStyle = '#141c2e';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    
+    const val = maxVal - (maxVal / 4) * i;
+    ctx.fillStyle = '#3d4f66';
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'right';
+    ctx.fillText('€' + formatNum(val), pad.left - 8, y + 4);
+  }
+  
+  // X labels
+  ctx.fillStyle = '#3d4f66';
+  ctx.textAlign = 'center';
+  data.forEach((d, i) => {
+    if (i % Math.ceil(data.length / 8) === 0 || i === data.length - 1) {
+      ctx.fillText('Y' + d.year, toX(i), H - pad.bottom + 20);
+    }
+  });
+  
+  // Contributed area (fill)
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(0));
+  data.forEach((d, i) => ctx.lineTo(toX(i), toY(d.contributed)));
+  ctx.lineTo(toX(data.length - 1), toY(0));
+  ctx.closePath();
+  ctx.fillStyle = '#38bdf815';
+  ctx.fill();
+  
+  // Contributed line
+  ctx.beginPath();
+  data.forEach((d, i) => i === 0 ? ctx.moveTo(toX(i), toY(d.contributed)) : ctx.lineTo(toX(i), toY(d.contributed)));
+  ctx.strokeStyle = '#38bdf860';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  
+  // Balance area (fill)
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(0));
+  data.forEach((d, i) => ctx.lineTo(toX(i), toY(d.balance)));
+  ctx.lineTo(toX(data.length - 1), toY(0));
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
+  grad.addColorStop(0, '#00ffc825');
+  grad.addColorStop(1, '#00ffc802');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  
+  // Balance line
+  ctx.beginPath();
+  data.forEach((d, i) => i === 0 ? ctx.moveTo(toX(i), toY(d.balance)) : ctx.lineTo(toX(i), toY(d.balance)));
+  ctx.strokeStyle = '#00ffc8';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  
+  // End dot
+  const last = data[data.length - 1];
+  ctx.beginPath();
+  ctx.arc(toX(data.length - 1), toY(last.balance), 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#00ffc8';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(toX(data.length - 1), toY(last.balance), 8, 0, Math.PI * 2);
+  ctx.strokeStyle = '#00ffc830';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+// ═══════════════════════════════════════════════════════
+//  MARKET REFERENCE
+// ═══════════════════════════════════════════════════════
+function renderMarket(data) {
+  const grid = document.getElementById('marketGrid');
+  if (!data || data.length === 0) {
+    grid.innerHTML = '<div class="empty-state">No market data available</div>';
+    return;
+  }
+  
+  grid.innerHTML = data.map(m => {
+    const change = parseFloat(m.changePct) || 0;
+    const changeClass = change >= 0 ? 'up' : 'down';
+    const changeSign = change >= 0 ? '+' : '';
+    const c = categoryColors[m.category];
+    return `
+      <div class="market-item">
+        <div>
+          <div class="market-ticker" style="color: ${c?.color || '#fff'}">${m.ticker}</div>
+          <div class="market-name">${m.name}</div>
+        </div>
+        <div style="text-align: right;">
+          <span class="market-price">$${typeof m.price === 'number' ? m.price.toFixed(2) : m.price}</span>
+          <span class="market-change ${changeClass}">${changeSign}${change.toFixed(2)}%</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════════════
+function switchTab(btn) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panelId = 'panel-' + btn.dataset.panel;
+  document.getElementById(panelId).classList.add('active');
+  
+  // Lazy load
+  if (btn.dataset.panel === 'history') loadHistory();
+  if (btn.dataset.panel === 'projection') {
+    updateProjection();
+    // Redraw on tab switch (canvas sizing)
+    setTimeout(() => drawProjectionChart(projectionData), 50);
+  }
+}
+
+// Redraw chart on resize
+window.addEventListener('resize', () => {
+  if (projectionData.length) drawProjectionChart(projectionData);
+});
+
+// ═══════════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════════
+function formatNum(n) {
+  if (n === undefined || n === null) return '0';
+  return Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
